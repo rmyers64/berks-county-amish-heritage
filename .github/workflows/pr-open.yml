@@ -1,0 +1,36 @@
+name: Build Pull request
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+env:
+  NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_TINA_CLIENT_ID }}
+  TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+  NEXT_PUBLIC_TINA_BRANCH: ${{ github.head_ref }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build sample
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dependencies
+        id: setup
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-
+
+      - name: Load .env file
+        # Pinned to SHA instead of @v2 — third-party action from an individual maintainer
+        uses: xom9ikk/dotenv@eff1dce037c4c0143cc4180a810511024c2560c0
+        with:
+          path: ./.github
+
+      - name: Build
+        run: ${{ steps.setup.outputs.runner }} build

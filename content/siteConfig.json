@@ -1,0 +1,17 @@
+﻿{
+  "title": "Berks County Amish Heritage",
+  "sidebarTitle": "Berks County Amish Heritage",
+  "seoDefaultTitle": "Berks County Amish Heritage",
+  "description": "A growing archive of Amish heritage books, stories, articles, and source documents connected with Berks County and The Fisher Book.",
+  "siteUrl": "https://berkscountyamishheritage.com",
+  "roadmapUrl": "https://berkscountyamishheritage.com/docs",
+  "licenseUrl": "https://berkscountyamishheritage.com/docs",
+  "keywords": "Berks County Amish, Amish heritage, Nicolas Stoltzfus, Fisher Book, Amish history, genealogy",
+  "docsHomepage": "/docs/index",
+  "social": {
+    "twitterHandle": "",
+    "twitter": "",
+    "github": "",
+    "forum": "https://thefisherbook.com"
+  }
+}
