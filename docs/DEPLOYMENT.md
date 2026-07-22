@@ -22,14 +22,17 @@ locally so a production build cannot consume the live server's resources.
 
 ## Build and verify locally
 
-Use Node.js 20 and pnpm 10.
+Use Docker to run the same Node.js 20 and pnpm 10 build used by production.
+This keeps TinaCMS in local-content mode and does not require TinaCloud
+credentials.
 
 ```powershell
-corepack enable
-pnpm install --frozen-lockfile
-pnpm run build
-pnpm exec pagefind --site out --output-path out/_pagefind
-pnpm run check:static-links
+docker build -f Dockerfile.static -t berks-static-build .
+$container = docker create berks-static-build
+New-Item -ItemType Directory -Force out | Out-Null
+docker cp "${container}:/usr/share/caddy/." out
+docker rm $container
+node scripts/check-static-links.mjs out
 ```
 
 The build must finish with the static-link check passing. Confirm that `out`
