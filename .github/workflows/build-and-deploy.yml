@@ -1,4 +1,4 @@
-name: Deploy Next.js site to Pages
+name: Verify main static site
 
 on:
   push:
@@ -7,12 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -34,14 +28,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup Pages
-        run: touch public/.nojekyll
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
-
       - name: Build and verify the data-free static site
         env:
           EXPORT_MODE: static
@@ -60,27 +46,3 @@ jobs:
           rm -rf out/admin
           pnpm exec pagefind --site out --output-path out/_pagefind || true
           node scripts/check-static-links.mjs out
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./out
-
-  search-tests:
-    needs: build
-    if: ${{ vars.SEARCH_TEST_BASE_URL != '' }}
-    uses: ./.github/workflows/search-test.yml
-    with:
-      base_url: ${{ vars.SEARCH_TEST_BASE_URL }}
-      NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
