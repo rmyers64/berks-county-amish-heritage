@@ -20,17 +20,19 @@ if (source.includes(buildCall)) {
 
 const schemaSourceDirectory = path.resolve("content/apiSchema");
 const schemaOutputDirectory = path.resolve("public/api-schemas");
-fs.mkdirSync(schemaOutputDirectory, { recursive: true });
+if (fs.existsSync(schemaSourceDirectory)) {
+  fs.mkdirSync(schemaOutputDirectory, { recursive: true });
 
-for (const filename of fs.readdirSync(schemaSourceDirectory)) {
-  if (!filename.endsWith(".json")) continue;
+  for (const filename of fs.readdirSync(schemaSourceDirectory)) {
+    if (!filename.endsWith(".json")) continue;
 
-  const tinaDocument = JSON.parse(
-    fs.readFileSync(path.join(schemaSourceDirectory, filename), "utf8")
-  );
-  const schema = JSON.parse(tinaDocument.apiSchema);
-  fs.writeFileSync(
-    path.join(schemaOutputDirectory, filename),
-    `${JSON.stringify(schema)}\n`
-  );
+    const tinaDocument = JSON.parse(
+      fs.readFileSync(path.join(schemaSourceDirectory, filename), "utf8")
+    );
+    const schema = JSON.parse(tinaDocument.apiSchema);
+    fs.writeFileSync(
+      path.join(schemaOutputDirectory, filename),
+      `${JSON.stringify(schema)}\n`
+    );
+  }
 }
