@@ -64,10 +64,10 @@ export async function generateMetadata({
   if (!data.docs.seo) {
     data.docs.seo = {
       __typename: "DocsSeo",
-      canonicalUrl: `${siteUrl}/tinadocs/docs/${slug}`,
+      canonicalUrl: `${siteUrl}/docs/${slug}`,
     };
   } else if (!data.docs.seo?.canonicalUrl) {
-    data.docs.seo.canonicalUrl = `${siteUrl}/tinadocs/docs/${slug}`;
+    data.docs.seo.canonicalUrl = `${siteUrl}/docs/${slug}`;
   }
 
   return getSeo(data.docs.seo, {
