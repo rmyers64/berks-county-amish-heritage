@@ -2,7 +2,7 @@ import { defineConfig } from "tinacms";
 import { schema } from "./schema";
 
 export const config = defineConfig({
-  telemetry: 'disabled',
+  telemetry: "disabled",
   schema,
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
   branch:

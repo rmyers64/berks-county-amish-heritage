@@ -21,10 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup dependencies
-        id: setup
-        uses: ./.github/actions/setup-deps
-
       - name: Setup Pages
         run: touch public/.nojekyll
 
@@ -33,20 +29,15 @@ jobs:
         with:
           static_site_generator: next
 
-      - name: Restore Next.js cache
-        uses: actions/cache@v4
-        with:
-          path: .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-
+      - name: Build and verify the data-free static site
+        run: docker build -f Dockerfile.static -t berks-static-pages .
 
-      - name: Build with Next.js & TinaCMS
-        run: ${{ steps.setup.outputs.runner }} export
-        env:
-          NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_TINA_CLIENT_ID }}
-          NEXT_PUBLIC_TINA_BRANCH: ${{ github.ref_name }}
-          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+      - name: Extract static site
+        run: |
+          container=$(docker create berks-static-pages)
+          mkdir -p out
+          docker cp "${container}:/usr/share/caddy/." out
+          docker rm "$container"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
