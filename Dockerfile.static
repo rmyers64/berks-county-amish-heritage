@@ -12,7 +12,8 @@ ENV UNOPTIMIZED_IMAGES=true
 ENV NEXT_PUBLIC_DISABLE_TINA_EDITING=true
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TINA_SKIP_ADMIN_BUILD=true
-RUN NEXT_PUBLIC_TINA_CLIENT_ID=static-disabled TINA_TOKEN=static-disabled NEXT_PUBLIC_TINA_BRANCH=main pnpm exec tinacms build --content=local --skip-cloud-checks -c "next build" \
+ENV NODE_ENV=production
+RUN NEXT_PUBLIC_TINA_CLIENT_ID=static-disabled TINA_TOKEN=static-disabled NEXT_PUBLIC_TINA_BRANCH=main pnpm exec tinacms build --local --skip-cloud-checks --skip-search-index --no-client-build-cache --noTelemetry -c "next build" \
   && rm -rf out/admin
 RUN pnpm exec pagefind --site out --output-path out/_pagefind || true
 RUN node scripts/check-static-links.mjs out
