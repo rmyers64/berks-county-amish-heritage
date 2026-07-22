@@ -1,15 +1,23 @@
 ﻿# syntax=docker/dockerfile:1
-FROM node:22-bookworm AS builder
+FROM node:20-bookworm AS builder
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.7.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.28.0 --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
+RUN node scripts/skip-tina-admin-build.mjs
+RUN find src/app/api -name route.ts -delete
 ENV EXPORT_MODE=static
 ENV UNOPTIMIZED_IMAGES=true
+ENV NEXT_PUBLIC_DISABLE_TINA_EDITING=true
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm exec tinacms build --content=local --skip-cloud-checks -c "next build"
+ENV TINA_SKIP_ADMIN_BUILD=true
+ENV NODE_ENV=production
+RUN NEXT_PUBLIC_TINA_CLIENT_ID=static-disabled TINA_TOKEN=static-disabled NEXT_PUBLIC_TINA_BRANCH=main pnpm exec tinacms build --local --skip-cloud-checks --skip-search-index --no-client-build-cache --noTelemetry -c "next build" \
+  && rm -rf out/admin
 RUN pnpm exec pagefind --site out --output-path out/_pagefind || true
+RUN node scripts/check-static-links.mjs out
 
 FROM caddy:2.10-alpine
 COPY --from=builder /app/out /usr/share/caddy
+COPY Caddyfile.static /etc/caddy/Caddyfile

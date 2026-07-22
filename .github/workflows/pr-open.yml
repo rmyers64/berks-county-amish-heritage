@@ -2,35 +2,43 @@ name: Build Pull request
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-env:
-  NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_TINA_CLIENT_ID }}
-  TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
-  NEXT_PUBLIC_TINA_BRANCH: ${{ github.head_ref }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build sample
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup dependencies
-        id: setup
-        uses: ./.github/actions/setup-deps
-
-      - name: Restore Next.js cache
-        uses: actions/cache@v4
+      - uses: pnpm/action-setup@v4
         with:
-          path: .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock', '**/package-lock.json') }}-
+          version: 10.28.0
 
-      - name: Load .env file
-        # Pinned to SHA instead of @v2 — third-party action from an individual maintainer
-        uses: xom9ikk/dotenv@eff1dce037c4c0143cc4180a810511024c2560c0
+      - uses: actions/setup-node@v4
         with:
-          path: ./.github
+          node-version: 20
+          cache: pnpm
 
-      - name: Build
-        run: ${{ steps.setup.outputs.runner }} build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and verify the data-free static site
+        env:
+          EXPORT_MODE: static
+          UNOPTIMIZED_IMAGES: "true"
+          NEXT_PUBLIC_DISABLE_TINA_EDITING: "true"
+          NEXT_TELEMETRY_DISABLED: "1"
+          TINA_SKIP_ADMIN_BUILD: "true"
+          NODE_ENV: production
+          NEXT_PUBLIC_TINA_CLIENT_ID: static-disabled
+          TINA_TOKEN: static-disabled
+          NEXT_PUBLIC_TINA_BRANCH: main
+        run: |
+          node scripts/skip-tina-admin-build.mjs
+          find src/app/api -name route.ts -delete
+          pnpm exec tinacms build --local --skip-cloud-checks --skip-search-index --no-client-build-cache --noTelemetry -c "next build"
+          rm -rf out/admin
+          pnpm exec pagefind --site out --output-path out/_pagefind || true
+          node scripts/check-static-links.mjs out

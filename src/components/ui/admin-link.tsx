@@ -21,6 +21,10 @@ const AdminLink = () => {
     setShowAdminLink(false);
   };
 
+  if (process.env.NEXT_PUBLIC_DISABLE_TINA_EDITING === "true") {
+    return null;
+  }
+
   return (
     <>
       {showAdminLink && (
