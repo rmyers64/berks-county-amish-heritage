@@ -1,5 +1,10 @@
 :80 {
   root * /usr/share/caddy
+  rewrite /docs.txt /docs/index.txt
+  rewrite /docs/index.txt /docs/index/index.txt
+  rewrite /docs/books/index.txt /docs/books/index/index.txt
+  rewrite /docs/articles/index.txt /docs/articles/index/index.txt
+  rewrite /docs/source-documents/index.txt /docs/source-documents/index/index.txt
   redir / /docs/ 308
   redir /docs/books /docs/books/index/ 308
   redir /docs/books/ /docs/books/index/ 308
