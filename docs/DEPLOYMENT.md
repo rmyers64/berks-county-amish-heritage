@@ -22,6 +22,10 @@ locally so a production build cannot consume the live server's resources.
 
 ## Build and verify locally
 
+GitHub Actions is intentionally disabled for this repository. Run these checks
+locally before every pull request and again before deploying so failed test
+runs do not generate repository email notifications.
+
 Use Docker to run the same Node.js 20 and pnpm 10 build used by production.
 This keeps TinaCMS in local-content mode and does not require TinaCloud
 credentials.
