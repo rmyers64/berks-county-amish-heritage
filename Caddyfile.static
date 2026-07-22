@@ -1,0 +1,11 @@
+:80 {
+  root * /usr/share/caddy
+  redir / /docs/ 308
+  redir /docs/books /docs/books/index/ 308
+  redir /docs/books/ /docs/books/index/ 308
+  redir /docs/articles /docs/articles/index/ 308
+  redir /docs/articles/ /docs/articles/index/ 308
+  redir /docs/source-documents /docs/source-documents/index/ 308
+  redir /docs/source-documents/ /docs/source-documents/index/ 308
+  file_server
+}

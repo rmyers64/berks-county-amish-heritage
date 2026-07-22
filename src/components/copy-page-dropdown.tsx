@@ -27,6 +27,7 @@ interface CopyPageDropdownProps {
 export const CopyPageDropdown: React.FC<CopyPageDropdownProps> = ({
   title = "Documentation Page",
 }) => {
+  const isStatic = process.env.NEXT_PUBLIC_DISABLE_TINA_EDITING === "true";
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [markdownUrl, setMarkdownUrl] = useState<string | null>(null);
@@ -117,6 +118,29 @@ export const CopyPageDropdown: React.FC<CopyPageDropdownProps> = ({
   };
 
   if (!hasMounted) return null;
+
+  if (isStatic) {
+    return (
+      <button
+        onClick={handleCopyPage}
+        className="mb-2 inline-flex h-fit w-fit items-center gap-2 rounded-lg border border-neutral-border-subtle/50 px-1.5 py-1 text-neutral-text-secondary shadow-sm brand-glass-gradient lg:mb-0"
+        data-exclude-from-md
+        type="button"
+      >
+        {copied ? (
+          <>
+            <MdCheck className="h-4 w-4" />
+            <span>Copied</span>
+          </>
+        ) : (
+          <>
+            <MdContentCopy className="h-4 w-4" />
+            <span className="hidden lg:block">Copy</span>
+          </>
+        )}
+      </button>
+    );
+  }
 
   return (
     <div

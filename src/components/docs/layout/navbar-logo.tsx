@@ -21,7 +21,7 @@ export const NavbarLogo = ({ navigationDocsData }: NavbarLogoProps) => {
   const darkLogo = navigationDocsData[0]?.darkModeLogo || lightLogo;
 
   return (
-    <Link href="/" className="flex items-center">
+    <Link href="/docs" className="flex items-center">
       <div className="relative md:w-[120px] w-[90px] h-[40px]">
         {mounted ? (
           <>

@@ -123,20 +123,24 @@ export const ApiReference = (data: ApiReferenceProps) => {
           return;
         }
 
-        // Fetch the schema file from API route
+        // Static exports publish normalized schemas as files; the editable app
+        // continues to use the Tina-backed API route.
         let schemaJson: any;
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/api/api-schema?relativePath=${encodeURIComponent(schemaPath)}`
-          );
+          const isStatic =
+            process.env.NEXT_PUBLIC_DISABLE_TINA_EDITING === "true";
+          const schemaUrl = isStatic
+            ? `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/api-schemas/${encodeURIComponent(schemaPath)}`
+            : `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/api/api-schema?relativePath=${encodeURIComponent(schemaPath)}`;
+          const response = await fetch(schemaUrl);
 
           if (!response.ok) {
             setEmptySchema();
             return;
           }
 
-          const data = await response.json();
-          schemaJson = data.schema;
+          const responseData = await response.json();
+          schemaJson = isStatic ? responseData : responseData.schema;
         } catch (error) {
           setEmptySchema();
           return;

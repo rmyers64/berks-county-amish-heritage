@@ -13,6 +13,7 @@
     "start": "tinacms build && next start",
     "lint": "biome check src/ tina/",
     "lint:fix": "biome check src/ tina/ --fix",
+    "check:static-links": "node scripts/check-static-links.mjs out",
     "cleanup": "node scripts/cleanup.js",
     "test": "playwright test",
     "test:ui": "playwright test --ui"

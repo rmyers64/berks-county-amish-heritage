@@ -1,4 +1,4 @@
-﻿{
+{
   "lightModeLogo": "/svg/tina-icon-orange.svg",
   "darkModeLogo": "/svg/tina-icon-orange.svg",
   "tabs": [
@@ -6,7 +6,7 @@
       "title": "Archive",
       "supermenuGroup": [
         { "title": "Start Here", "items": [ { "slug": "content/docs/index.mdx", "_template": "item" } ] },
-        { "title": "Books", "items": [ { "slug": "content/docs/books/index.mdx", "_template": "item" }, { "slug": "content/docs/books/stoltzfus-book.mdx", "_template": "item" } ] },
+        { "title": "Books", "items": [ { "slug": "content/docs/books/index.mdx", "_template": "item" } ] },
         { "title": "Articles and Stories", "items": [ { "slug": "content/docs/articles/index.mdx", "_template": "item" } ] },
         { "title": "Source Documents", "items": [ { "slug": "content/docs/source-documents/index.mdx", "_template": "item" } ] }
       ],
@@ -14,7 +14,6 @@
     }
   ],
   "ctaButtons": {
-    "button1": { "label": "The Fisher Book", "link": "https://thefisherbook.com", "variant": "primary-outline" },
-    "button2": { "label": "Source PDF", "link": "/source-documents/40819_NSH--Interior--PROOF5.pdf", "variant": "primary-background" }
+    "button1": { "label": "The Fisher Book", "link": "https://thefisherbook.com", "variant": "primary-outline" }
   }
 }

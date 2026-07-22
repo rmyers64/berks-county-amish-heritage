@@ -19,6 +19,14 @@ export type TinaClientProps<T> = {
 };
 
 export function TinaClient<T>({ props, Component }: TinaClientProps<T>) {
+  if (process.env.NEXT_PUBLIC_DISABLE_TINA_EDITING === "true") {
+    return <Component tinaProps={{ data: props.data }} props={{ ...props }} />;
+  }
+
+  return <EditableTinaClient props={props} Component={Component} />;
+}
+
+function EditableTinaClient<T>({ props, Component }: TinaClientProps<T>) {
   const { data } = props.forceExperimental
     ? useTina({
         query: props.query,
